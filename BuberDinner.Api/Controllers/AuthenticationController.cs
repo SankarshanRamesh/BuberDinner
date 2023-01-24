@@ -15,14 +15,15 @@ namespace BuberDinner.Api.Controllers
             _authenticationService = authenticationService;
         }
 
+        [HttpPost]
         [Route("register")]
         public IActionResult Register(RegisterRequest registerRequest)
         {
-            var authResult = _authenticationService.Register(registerRequest.Email, registerRequest.Password, registerRequest.FirstName, registerRequest.LastName);
-            var response = new AuthentcationResponse() { Email = authResult.Email, FirstName = authResult.FirstName, LastName = authResult.LastName, Token = authResult.Token, Id = authResult.Id };
+            var response = _authenticationService.Register(registerRequest.Email, registerRequest.Password, registerRequest.FirstName, registerRequest.LastName);
             return Ok(response);
         }
 
+        [HttpPost]
         [Route("login")]
         public IActionResult Login(LoginRequest loginRequest)
         {
