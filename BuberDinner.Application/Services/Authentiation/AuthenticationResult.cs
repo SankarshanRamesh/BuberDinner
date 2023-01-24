@@ -1,11 +1,10 @@
-﻿namespace BuberDinner.Application.Services.Authentiation
+﻿using BuberDinner.Domain.Entities;
+
+namespace BuberDinner.Application.Services.Authentiation
 {
-    public class AuthenticationResult
-    {
-        public Guid Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string Token { get; set; }
-    }
+    public record AuthenticationResult
+    (
+        User user,
+    string Token
+    );
 }

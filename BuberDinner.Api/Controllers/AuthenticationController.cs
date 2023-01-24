@@ -28,7 +28,14 @@ namespace BuberDinner.Api.Controllers
         public IActionResult Login(LoginRequest loginRequest)
         {
             var authResult = _authenticationService.Login(loginRequest.Email, loginRequest.Password);
-            var response = new AuthentcationResponse() { Email = authResult.Email, FirstName = authResult.FirstName, LastName = authResult.LastName, Token = authResult.Token, Id = authResult.Id };
+            var response = new AuthentcationResponse()
+            {
+                Email = authResult.user.Email,
+                FirstName = authResult.user.FirstName,
+                LastName = authResult.user.LastName,
+                Token = authResult.Token,
+                Id = authResult.user.Id
+            };
             return Ok(response);
         }
     }
