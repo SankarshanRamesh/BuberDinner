@@ -1,12 +1,13 @@
 ﻿using BuberDinner.Application.Services.Authentiation;
 using BuberDinner.Contracts.Authentication;
+using BuberDinner.Domain.Common.Errors;
+using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuberDinner.Api.Controllers
 {
     [Route("[controller]")]
-    [ApiController]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController : ApiController
     {
         private readonly IAuthenticationService _authenticationService;
 
@@ -19,8 +20,10 @@ namespace BuberDinner.Api.Controllers
         [Route("register")]
         public IActionResult Register(RegisterRequest registerRequest)
         {
-            var response = _authenticationService.Register(registerRequest.Email, registerRequest.Password, registerRequest.FirstName, registerRequest.LastName);
-            return Ok(response);
+            ErrorOr<AuthenticationResult> authResult = _authenticationService.Register(registerRequest.Email, registerRequest.Password, registerRequest.FirstName, registerRequest.LastName);
+
+            return authResult.Match(authResult => Ok(MapAuthResult(authResult)),
+                errors => Problem(errors));
         }
 
         [HttpPost]
@@ -28,15 +31,27 @@ namespace BuberDinner.Api.Controllers
         public IActionResult Login(LoginRequest loginRequest)
         {
             var authResult = _authenticationService.Login(loginRequest.Email, loginRequest.Password);
-            var response = new AuthentcationResponse()
+
+            if (authResult.IsError && authResult.FirstError == Errors.Authentication.InvalidCredentials)
             {
-                Email = authResult.user.Email,
-                FirstName = authResult.user.FirstName,
-                LastName = authResult.user.LastName,
-                Token = authResult.Token,
-                Id = authResult.user.Id
-            };
-            return Ok(response);
+                return Problem(statusCode: StatusCodes.Status401Unauthorized,
+                    title: authResult.FirstError.Description);
+            }
+
+            return authResult.Match(authResult => Ok(MapAuthResult(authResult)),
+                errors => Problem(errors));
+        }
+
+        private static AuthentcationResponse MapAuthResult(AuthenticationResult authResult)
+        {
+            return new AuthentcationResponse
+                        (
+                            authResult.user.Id,
+                            authResult.user.FirstName,
+                            authResult.user.LastName,
+                            authResult.user.Email,
+                            authResult.Token
+                        );
         }
     }
 }
