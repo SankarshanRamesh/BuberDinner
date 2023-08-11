@@ -39,6 +39,10 @@ namespace BuberDinner.Api.Middleware
     {
         public static IApplicationBuilder UseErrorHandlingMiddleware(this IApplicationBuilder builder)
         {
+            dynamic e;
+            e = "3";
+            e = e + 3;
+            var f = e.GetType();
             return builder.UseMiddleware<ErrorHandlingMiddleware>();
         }
     }
