@@ -21,11 +21,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 {
-    dynamic e;
-    e = "3";
-    e = e + 3;
-    var f = e.GetType();
-
     //app.UseMiddleware<ErrorHandlingMiddleware>(); //via middleware
     app.UseExceptionHandler("/error");//via error endpoint and custom problem details factory 
     // Configure the HTTP request pipeline.
@@ -36,7 +31,7 @@ var app = builder.Build();
     //}
 
     app.UseHttpsRedirection();
-
+    app.UseAuthentication();
     app.UseAuthorization();
 
     app.MapControllers();

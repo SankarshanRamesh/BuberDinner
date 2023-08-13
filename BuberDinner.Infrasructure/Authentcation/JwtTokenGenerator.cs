@@ -37,7 +37,9 @@ namespace BuberDinner.Infrasructure.Authentication
                 issuer: _jwtSettings.Issuer,
                 expires: _dateTimeProvider.Utcnow.AddMinutes(_jwtSettings.ExpiryMinutes),
                 claims: claims,
-                signingCredentials: signingCredentials
+                signingCredentials: signingCredentials,
+                audience: _jwtSettings.Audience
+
                 );
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
